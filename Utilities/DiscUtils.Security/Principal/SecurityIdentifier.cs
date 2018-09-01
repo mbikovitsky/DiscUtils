@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DiscUtils.Security.Principal
@@ -52,6 +54,43 @@ namespace DiscUtils.Security.Principal
         //
 
         private string _sddlForm = null;
+
+        private static readonly IReadOnlyDictionary<string, string> _wellKnownSddlConstants = new Dictionary<string, string>
+        {
+            { "AC", "S-1-15-2-1" },
+            { "AN", "S-1-5-7" },
+            { "AO", "S-1-5-32-548" },
+            { "AU", "S-1-5-11" },
+            { "BA", "S-1-5-32-544" },
+            { "BG", "S-1-5-32-546" },
+            { "BO", "S-1-5-32-551" },
+            { "BU", "S-1-5-32-545" },
+            { "CD", "S-1-5-32-574" },
+            { "CG", "S-1-3-1" },
+            { "CO", "S-1-3-0" },
+            { "ED", "S-1-5-9" },
+            { "HI", "S-1-16-12288" },
+            { "IU", "S-1-5-4" },
+            { "LS", "S-1-5-19" },
+            { "LW", "S-1-16-4096" },
+            { "ME", "S-1-16-8192" },
+            { "MU", "S-1-5-32-558" },
+            { "NO", "S-1-5-32-556" },
+            { "NS", "S-1-5-20" },
+            { "NU", "S-1-5-2" },
+            { "PO", "S-1-5-32-550" },
+            { "PS", "S-1-5-10" },
+            { "PU", "S-1-5-32-547" },
+            { "RC", "S-1-5-12" },
+            { "RD", "S-1-5-32-555" },
+            { "RE", "S-1-5-32-552" },
+            { "RU", "S-1-5-32-554" },
+            { "SI", "S-1-16-16384" },
+            { "SO", "S-1-5-32-549" },
+            { "SU", "S-1-5-6" },
+            { "SY", "S-1-5-18" },
+            { "WD", "S-1-1-0" }
+        };
 
         #endregion
 
@@ -276,7 +315,48 @@ namespace DiscUtils.Security.Principal
                 throw new ArgumentNullException(nameof(sddlForm));
             }
 
-            throw new NotImplementedException();
+            sddlForm = _wellKnownSddlConstants.GetValueOrDefault(sddlForm, sddlForm);
+
+            string[] components = sddlForm.Split('-');
+
+            if (components.Length < 3)
+            {
+                throw new ArgumentOutOfRangeException(nameof(sddlForm), sddlForm,
+                    "Not enough components in SDDL string.");
+            }
+
+            if (components[0] != "S")
+            {
+                throw new ArgumentException($"Invalid SDDL prefix '{components[0]}'.", nameof(sddlForm));
+            }
+
+            byte revision = byte.Parse(components[1]);
+            if (revision != Revision)
+            {
+                throw new ArgumentException($"Invalid revision '{revision}'.", nameof(sddlForm));
+            }
+
+            IdentifierAuthority authority = (IdentifierAuthority)long.Parse(components[2]);
+            if (authority < 0 ||
+                (long)authority > MaxIdentifierAuthority)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sddlForm),
+                    sddlForm,
+                    "The size of the identifier authority must not exceed 6 bytes.");
+            }
+
+            int[] subAuthorities = components.Skip(3).Select(int.Parse).ToArray();
+            if (subAuthorities.Length > MaxSubAuthorities)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sddlForm),
+                    sddlForm,
+                    $"The number of sub-authorities must not exceed {MaxSubAuthorities}.");
+            }
+
+            _identifierAuthority = authority;
+            _subAuthorities = subAuthorities;
         }
 
         //
