@@ -55,8 +55,8 @@ namespace DiscUtils.Security.AccessControl
             else if (offset < 0)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(offset),
-                     SR.ArgumentOutOfRange_NeedNonNegNum);
+                    nameof(offset),
+                    "Non-negative number required.");
             }
             else if (binaryForm.Length - offset < BinaryLength)
             {
@@ -65,8 +65,8 @@ nameof(offset),
                 //
 
                 throw new ArgumentOutOfRangeException(
-nameof(binaryForm),
-                     SR.ArgumentOutOfRange_ArrayTooSmall);
+                    nameof(binaryForm),
+                    "Destination array is not long enough to copy all the required data. Check array length and offset.");
             }
             else if (Length > ushort.MaxValue)
             {
@@ -128,8 +128,8 @@ nameof(binaryForm),
             if (flags == AceFlags.None)
             {
                 throw new ArgumentException(
-                     SR.Arg_EnumAtLeastOneFlag,
-nameof(auditFlags));
+                    "Must set at least one flag.",
+                    nameof(auditFlags));
             }
 
             return flags;
@@ -186,8 +186,8 @@ nameof(auditFlags));
             else if (offset < 0)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(offset),
-                     SR.ArgumentOutOfRange_NeedNonNegNum);
+                    nameof(offset),
+                    "Non-negative number required.");
             }
             else if (binaryForm.Length - offset < HeaderLength)
             {
@@ -196,8 +196,8 @@ nameof(offset),
                 //
 
                 throw new ArgumentOutOfRangeException(
-nameof(binaryForm),
-                     SR.ArgumentOutOfRange_ArrayTooSmall);
+                    nameof(binaryForm),
+                    "Destination array is not long enough to copy all the required data. Check array length and offset.");
             }
             else if ((binaryForm[offset + 3] << 8) + (binaryForm[offset + 2] << 0) > binaryForm.Length - offset)
             {
@@ -207,8 +207,8 @@ nameof(binaryForm),
                 //
 
                 throw new ArgumentOutOfRangeException(
-nameof(binaryForm),
-                     SR.ArgumentOutOfRange_ArrayTooSmall);
+                    nameof(binaryForm),
+                    "Destination array is not long enough to copy all the required data. Check array length and offset.");
             }
         }
 
@@ -345,8 +345,8 @@ nameof(binaryForm),
             InvalidParameter:
 
             throw new ArgumentException(
-                 SR.ArgumentException_InvalidAceBinaryForm,
-nameof(binaryForm));
+                "The binary form of an ACE object is invalid.",
+                nameof(binaryForm));
         }
 
         #endregion

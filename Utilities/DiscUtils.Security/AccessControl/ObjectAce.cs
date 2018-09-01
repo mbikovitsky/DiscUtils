@@ -63,8 +63,8 @@ namespace DiscUtils.Security.AccessControl
                 default:
 
                     throw new ArgumentOutOfRangeException(
-nameof(qualifier),
-                        SR.ArgumentOutOfRange_Enum);
+                        nameof(qualifier),
+                        "Enum value was out of legal range.");
             }
         }
 

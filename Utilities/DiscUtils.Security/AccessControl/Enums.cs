@@ -2,12 +2,10 @@
 
 namespace DiscUtils.Security.AccessControl
 {
-    //
-    // Predefined ACE types
-    // Anything else is considered user-defined
-    //
-
-
+    /// <summary>
+    /// Predefined ACE types.
+    /// Anything else is considered user-defined.
+    /// </summary>
     public enum AceType : byte
     {
         AccessAllowed = 0x00,
@@ -30,12 +28,11 @@ namespace DiscUtils.Security.AccessControl
         MaxDefinedAceType = SystemAlarmCallbackObject,
     }
 
-    //
-    // Predefined ACE flags
-    // The inheritance and auditing flags are stored in the
-    // same field - this is to follow Windows ACE design
-    //
-
+    /// <summary>
+    /// Predefined ACE flags.
+    /// The inheritance and auditing flags are stored in the
+    /// same field - this is to follow Windows ACE design.
+    /// </summary>
     [Flags]
     public enum AceFlags : byte
     {

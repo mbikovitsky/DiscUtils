@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using DiscUtils.Security.Principal;
 
 namespace DiscUtils.Security.AccessControl
@@ -195,14 +194,14 @@ namespace DiscUtils.Security.AccessControl
                 if (opaque.Length > MaxOpaqueLengthInternal)
                 {
                     throw new ArgumentOutOfRangeException(
-nameof(opaque),
-                        string.Format(CultureInfo.CurrentCulture, SR.ArgumentOutOfRange_ArrayLength, 0, MaxOpaqueLengthInternal));
+                        nameof(opaque),
+                        $"The length of the array must be between {0} and {MaxOpaqueLengthInternal}, inclusive.");
                 }
                 else if (opaque.Length % 4 != 0)
                 {
                     throw new ArgumentOutOfRangeException(
-nameof(opaque),
-                        string.Format(CultureInfo.CurrentCulture, SR.ArgumentOutOfRange_ArrayLengthMultiple, 4));
+                        nameof(opaque),
+                        $"The length of the array must be a multiple of {4}.");
                 }
             }
 

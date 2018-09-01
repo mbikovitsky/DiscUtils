@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 
 namespace DiscUtils.Security.AccessControl
 {
-    //
-    // User-defined ACEs are ACE types we don't recognize.
-    // They contain a standard ACE header followed by a binary blob.
-    //
-
-
+    /// <summary>
+    /// User-defined ACEs are ACE types we don't recognize.
+    /// They contain a standard ACE header followed by a binary blob.
+    /// </summary>
     public sealed class CustomAce : GenericAce
     {
         #region Private Members
@@ -42,8 +39,8 @@ namespace DiscUtils.Security.AccessControl
             if (type <= AceType.MaxDefinedAceType)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(type),
-                     SR.ArgumentOutOfRange_InvalidUserDefinedAceType);
+                    nameof(type),
+                    "User-defined ACEs must not have a well-known ACE type.");
             }
 
             SetOpaque(opaque);
@@ -106,14 +103,14 @@ nameof(type),
                 if (opaque.Length > MaxOpaqueLength)
                 {
                     throw new ArgumentOutOfRangeException(
-nameof(opaque),
-                        string.Format(CultureInfo.CurrentCulture, SR.ArgumentOutOfRange_ArrayLength, 0, MaxOpaqueLength));
+                        nameof(opaque),
+                        $"The length of the array must be between {0} and {MaxOpaqueLength}, inclusive.");
                 }
                 else if (opaque.Length % 4 != 0)
                 {
                     throw new ArgumentOutOfRangeException(
-nameof(opaque),
-                        string.Format(CultureInfo.CurrentCulture, SR.ArgumentOutOfRange_ArrayLengthMultiple, 4));
+                        nameof(opaque),
+                        $"The length of the array must be a multiple of {4}.");
                 }
             }
 
