@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.InteropServices;
 using DiscUtils.Security.Principal;
 
 namespace DiscUtils.Security.AccessControl
@@ -65,8 +63,8 @@ namespace DiscUtils.Security.AccessControl
         //
 
         public RawSecurityDescriptor(string sddlForm)
-            : this(BinaryFormFromSddlForm(sddlForm), 0)
         {
+            throw new NotImplementedException();
         }
 
         //
@@ -93,7 +91,7 @@ namespace DiscUtils.Security.AccessControl
                 //
 
                 throw new ArgumentOutOfRangeException(nameof(offset),
-                     SR.ArgumentOutOfRange_NeedNonNegNum);
+                    "Non-negative number required.");
             }
 
             //
@@ -103,8 +101,8 @@ namespace DiscUtils.Security.AccessControl
             if (binaryForm.Length - offset < HeaderLength)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(binaryForm),
-                     SR.ArgumentOutOfRange_ArrayTooSmall);
+                    nameof(binaryForm),
+                    "Destination array is not long enough to copy all the required data. Check array length and offset.");
             }
 
             //
@@ -114,7 +112,7 @@ nameof(binaryForm),
             if (binaryForm[offset + 0] != Revision)
             {
                 throw new ArgumentOutOfRangeException(nameof(binaryForm),
-                     SR.AccessControl_InvalidSecurityDescriptorRevision);
+                    "Security descriptor with revision other than '1' are not legal.");
             }
 
 
@@ -142,8 +140,8 @@ nameof(binaryForm),
             if ((flags & ControlFlags.SelfRelative) == 0)
             {
                 throw new ArgumentException(
-                     SR.AccessControl_InvalidSecurityDescriptorSelfRelativeForm,
-nameof(binaryForm));
+                    "Security descriptor must be in the self-relative form.",
+                    nameof(binaryForm));
             }
 
             //
@@ -223,80 +221,6 @@ nameof(binaryForm));
             {
                 ResourceManagerControl = rmControl;
             }
-        }
-
-        #endregion
-
-        #region Static Methods
-
-        private static byte[] BinaryFormFromSddlForm(string sddlForm)
-        {
-            if (sddlForm == null)
-            {
-                throw new ArgumentNullException(nameof(sddlForm));
-            }
-
-            int error;
-            IntPtr byteArray = IntPtr.Zero;
-            uint byteArraySize = 0;
-            byte[] binaryForm = null;
-
-            try
-            {
-                if (!Interop.Advapi32.ConvertStringSdToSd(
-                        sddlForm,
-                        GenericSecurityDescriptor.Revision,
-                        out byteArray,
-                        ref byteArraySize))
-                {
-                    error = Marshal.GetLastWin32Error();
-
-                    if (error == Interop.Errors.ERROR_INVALID_PARAMETER ||
-                        error == Interop.Errors.ERROR_INVALID_ACL ||
-                        error == Interop.Errors.ERROR_INVALID_SECURITY_DESCR ||
-                        error == Interop.Errors.ERROR_UNKNOWN_REVISION)
-                    {
-                        throw new ArgumentException(
-                             SR.ArgumentException_InvalidSDSddlForm,
-nameof(sddlForm));
-                    }
-                    else if (error == Interop.Errors.ERROR_NOT_ENOUGH_MEMORY)
-                    {
-                        throw new OutOfMemoryException();
-                    }
-                    else if (error == Interop.Errors.ERROR_INVALID_SID)
-                    {
-                        throw new ArgumentException(
-                             SR.AccessControl_InvalidSidInSDDLString,
-nameof(sddlForm));
-                    }
-                    else if (error != Interop.Errors.ERROR_SUCCESS)
-                    {
-                        Debug.Assert(false, string.Format(CultureInfo.InvariantCulture, "Unexpected error out of Win32.ConvertStringSdToSd: {0}", error));
-                        throw new Win32Exception(error, SR.Format(SR.AccessControl_UnexpectedError, error));
-                    }
-                }
-
-                binaryForm = new byte[byteArraySize];
-
-                //
-                // Extract the data from the returned pointer
-                //
-
-                Marshal.Copy(byteArray, binaryForm, 0, (int)byteArraySize);
-            }
-            finally
-            {
-                //
-                // Now is a good time to get rid of the returned pointer
-                //
-                if (byteArray != IntPtr.Zero)
-                {
-                    Interop.Kernel32.LocalFree(byteArray);
-                }
-            }
-
-            return binaryForm;
         }
 
         #endregion

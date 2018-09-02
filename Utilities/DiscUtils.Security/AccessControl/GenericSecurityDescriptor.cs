@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using DiscUtils.Security.Principal;
 
 namespace DiscUtils.Security.AccessControl
@@ -167,53 +166,7 @@ namespace DiscUtils.Security.AccessControl
 
         public string GetSddlForm(AccessControlSections includeSections)
         {
-            byte[] binaryForm = new byte[BinaryLength];
-            string resultSddl;
-            int error;
-
-            GetBinaryForm(binaryForm, 0);
-
-            SecurityInfos flags = 0;
-
-            if ((includeSections & AccessControlSections.Owner) != 0)
-            {
-                flags |= SecurityInfos.Owner;
-            }
-
-            if ((includeSections & AccessControlSections.Group) != 0)
-            {
-                flags |= SecurityInfos.Group;
-            }
-
-            if ((includeSections & AccessControlSections.Audit) != 0)
-            {
-                flags |= SecurityInfos.SystemAcl;
-            }
-
-            if ((includeSections & AccessControlSections.Access) != 0)
-            {
-                flags |= SecurityInfos.DiscretionaryAcl;
-            }
-
-            error = Win32.ConvertSdToSddl(binaryForm, 1, flags, out resultSddl);
-
-            if (error == Interop.Errors.ERROR_INVALID_PARAMETER ||
-                error == Interop.Errors.ERROR_UNKNOWN_REVISION)
-            {
-                //
-                // Indicates that the marshaling logic in GetBinaryForm is busted
-                //
-
-                Debug.Assert(false, "binaryForm produced invalid output");
-                throw new InvalidOperationException();
-            }
-            else if (error != Interop.Errors.ERROR_SUCCESS)
-            {
-                Debug.Assert(false, string.Format(CultureInfo.InvariantCulture, "Win32.ConvertSdToSddl returned {0}", error));
-                throw new InvalidOperationException();
-            }
-
-            return resultSddl;
+            throw new NotImplementedException();
         }
 
         //
@@ -230,14 +183,14 @@ namespace DiscUtils.Security.AccessControl
             if (offset < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(offset),
-                    SR.ArgumentOutOfRange_NeedNonNegNum);
+                    "Non-negative number required.");
             }
 
             if (binaryForm.Length - offset < BinaryLength)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(binaryForm),
-                    SR.ArgumentOutOfRange_ArrayTooSmall);
+                    nameof(binaryForm),
+                    "Destination array is not long enough to copy all the required data. Check array length and offset.");
             }
 
             //
