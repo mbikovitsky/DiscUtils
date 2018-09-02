@@ -29,8 +29,8 @@ namespace DiscUtils.Security.AccessControl
                 //
 
                 throw new ArgumentOutOfRangeException(
-nameof(offset),
-                    SR.ArgumentOutOfRange_NeedNonNegNum);
+                    nameof(offset),
+                    "Non-negative number required.");
             }
 
             if (binaryForm.Length - offset < HeaderLength)
@@ -61,8 +61,8 @@ nameof(offset),
             InvalidParameter:
 
             throw new ArgumentOutOfRangeException(
-nameof(binaryForm),
-                SR.ArgumentOutOfRange_ArrayTooSmall);
+                nameof(binaryForm),
+                "Destination array is not long enough to copy all the required data. Check array length and offset.");
         }
 
         private void MarshalHeader(byte[] binaryForm, int offset)
@@ -74,18 +74,18 @@ nameof(binaryForm),
             else if (offset < 0)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(offset),
-                    SR.ArgumentOutOfRange_NeedNonNegNum);
+                    nameof(offset),
+                    "Non-negative number required.");
             }
             else if (BinaryLength > MaxBinaryLength)
             {
-                throw new InvalidOperationException(SR.AccessControl_AclTooLong);
+                throw new InvalidOperationException("Length of the access control list exceed the allowed maximum.");
             }
             else if (binaryForm.Length - offset < BinaryLength)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(binaryForm),
-                    SR.ArgumentOutOfRange_ArrayTooSmall);
+                    nameof(binaryForm),
+                    "Destination array is not long enough to copy all the required data. Check array length and offset.");
             }
 
             binaryForm[offset + 0] = Revision;
@@ -132,8 +132,8 @@ nameof(binaryForm),
                     //
 
                     throw new ArgumentException(
-                        SR.ArgumentException_InvalidAclBinaryForm,
-nameof(binaryForm));
+                        "The binary form of an ACL object is invalid.",
+                        nameof(binaryForm));
                 }
 
                 _aces.Add(ace);
@@ -185,8 +185,8 @@ nameof(binaryForm));
             InvalidParameter:
 
             throw new ArgumentException(
-                SR.ArgumentException_InvalidAclBinaryForm,
-nameof(binaryForm));
+                "The binary form of an ACL object is invalid.",
+                nameof(binaryForm));
         }
 
         #endregion
@@ -339,7 +339,7 @@ nameof(binaryForm));
 
                 if (newBinaryLength > MaxBinaryLength)
                 {
-                    throw new OverflowException(SR.AccessControl_AclTooLong);
+                    throw new OverflowException("Length of the access control list exceed the allowed maximum.");
                 }
 
                 _aces[index] = value;
@@ -359,7 +359,7 @@ nameof(binaryForm));
 
             if (BinaryLength + ace.BinaryLength > MaxBinaryLength)
             {
-                throw new OverflowException(SR.AccessControl_AclTooLong);
+                throw new OverflowException("Length of the access control list exceed the allowed maximum.");
             }
 
             _aces.Insert(index, ace);

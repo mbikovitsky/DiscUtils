@@ -92,20 +92,20 @@ namespace DiscUtils.Security.AccessControl
 
             if (array.Rank != 1)
             {
-                throw new RankException(SR.Rank_MultiDimNotSupported);
+                throw new RankException("Only single dimension arrays are supported here.");
             }
 
             if (index < 0)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(index),
-                    SR.ArgumentOutOfRange_NeedNonNegNum);
+                    nameof(index),
+                    "Non-negative number required.");
             }
             else if (array.Length - index < Count)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(array),
-                    SR.ArgumentOutOfRange_ArrayTooSmall);
+                    nameof(array),
+                    "Destination array is not long enough to copy all the required data. Check array length and offset.");
             }
 
             for (int i = 0; i < Count; i++)

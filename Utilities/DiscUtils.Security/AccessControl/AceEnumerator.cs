@@ -45,7 +45,7 @@ namespace DiscUtils.Security.AccessControl
                 if (_current == -1 ||
                     _current >= _acl.Count)
                 {
-                    throw new InvalidOperationException(SR.Arg_InvalidOperationException);
+                    throw new InvalidOperationException("Operation is not valid due to the current state of the object.");
                 }
 
                 return _acl[_current];

@@ -32,29 +32,29 @@ namespace DiscUtils.Security.AccessControl
             if (accessMask == 0)
             {
                 throw new ArgumentException(
-                    SR.Argument_ArgumentZero,
-nameof(accessMask));
+                    "Argument cannot be zero.",
+                    nameof(accessMask));
             }
 
             if (inheritanceFlags < InheritanceFlags.None || inheritanceFlags > (InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit))
             {
                 throw new ArgumentOutOfRangeException(
-nameof(inheritanceFlags),
-                    SR.Format(SR.Argument_InvalidEnumValue, inheritanceFlags, "InheritanceFlags"));
+                    nameof(inheritanceFlags),
+                    $"The value '{inheritanceFlags}' is not valid for this usage of the type {InheritanceFlags}.");
             }
 
             if (propagationFlags < PropagationFlags.None || propagationFlags > (PropagationFlags.NoPropagateInherit | PropagationFlags.InheritOnly))
             {
                 throw new ArgumentOutOfRangeException(
-nameof(propagationFlags),
-                    SR.Format(SR.Argument_InvalidEnumValue, inheritanceFlags, "PropagationFlags"));
+                    nameof(propagationFlags),
+                    $"The value '{propagationFlags}' is not valid for this usage of the type {PropagationFlags}.");
             }
 
             if (identity.IsValidTargetType(typeof(SecurityIdentifier)) == false)
             {
                 throw new ArgumentException(
-                    SR.Arg_MustBeIdentityReferenceType,
-nameof(identity));
+                    "Type must be an IdentityReference, such as NTAccount or SecurityIdentifier.",
+                    nameof(identity));
             }
 
             _identity = identity;

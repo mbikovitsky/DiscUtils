@@ -1249,7 +1249,7 @@ namespace DiscUtils.Security.AccessControl
         {
             if (!_isCanonical)
             {
-                throw new InvalidOperationException(SR.InvalidOperation_ModificationOfNonCanonicalAcl);
+                throw new InvalidOperationException("This access control list is not in canonical form and therefore cannot be modified.");
             }
         }
 
@@ -1365,8 +1365,8 @@ namespace DiscUtils.Security.AccessControl
                 accessType != AccessControlType.Deny)
             {
                 throw new ArgumentOutOfRangeException(
-nameof(accessType),
-                    SR.ArgumentOutOfRange_Enum);
+                    nameof(accessType),
+                    "Enum value was out of legal range.");
             }
         }
 
@@ -1382,21 +1382,21 @@ nameof(accessType),
                     propagationFlags != PropagationFlags.None)
                 {
                     throw new ArgumentException(
-                        SR.Argument_InvalidAnyFlag,
-nameof(propagationFlags));
+                        "No flags can be set.",
+                        nameof(propagationFlags));
                 }
             }
             else if (inheritanceFlags != InheritanceFlags.None)
             {
                 throw new ArgumentException(
-                    SR.Argument_InvalidAnyFlag,
-nameof(inheritanceFlags));
+                    "No flags can be set.",
+                    nameof(inheritanceFlags));
             }
             else if (propagationFlags != PropagationFlags.None)
             {
                 throw new ArgumentException(
-                    SR.Argument_InvalidAnyFlag,
-nameof(propagationFlags));
+                    "No flags can be set.",
+                    nameof(propagationFlags));
             }
 
             return;
@@ -1421,15 +1421,15 @@ nameof(propagationFlags));
                 ((flags & AceFlags.AuditFlags) == 0))
             {
                 throw new ArgumentException(
-                    SR.Arg_EnumAtLeastOneFlag,
-nameof(flags));
+                    "Must set at least one flag.",
+                    nameof(flags));
             }
 
             if (accessMask == 0)
             {
                 throw new ArgumentException(
-                    SR.Argument_ArgumentZero,
-nameof(accessMask));
+                    "Argument cannot be zero.",
+                    nameof(accessMask));
             }
 
             GenericAce newAce;
@@ -1500,15 +1500,15 @@ nameof(accessMask));
                 ((flags & AceFlags.AuditFlags) == 0))
             {
                 throw new ArgumentException(
-                    SR.Arg_EnumAtLeastOneFlag,
-nameof(flags));
+                    "Must set at least one flag.",
+                    nameof(flags));
             }
 
             if (accessMask == 0)
             {
                 throw new ArgumentException(
-                    SR.Argument_ArgumentZero,
-nameof(accessMask));
+                    "Argument cannot be zero.",
+                    nameof(accessMask));
             }
 
             ThrowIfNotCanonical();
@@ -1605,16 +1605,16 @@ nameof(accessMask));
             if (accessMask == 0)
             {
                 throw new ArgumentException(
-                    SR.Argument_ArgumentZero,
-nameof(accessMask));
+                    "Argument cannot be zero.",
+                    nameof(accessMask));
             }
 
             if (qualifier == AceQualifier.SystemAudit &&
                 ((flags & AceFlags.AuditFlags) == 0))
             {
                 throw new ArgumentException(
-                    SR.Arg_EnumAtLeastOneFlag,
-nameof(flags));
+                    "Must set at least one flag.",
+                    nameof(flags));
             }
 
             if (sid == null)
@@ -2050,16 +2050,16 @@ nameof(flags));
             if (accessMask == 0)
             {
                 throw new ArgumentException(
-                    SR.Argument_ArgumentZero,
-nameof(accessMask));
+                    "Argument cannot be zero.",
+                    nameof(accessMask));
             }
 
             if (qualifier == AceQualifier.SystemAudit &&
                 ((flags & AceFlags.AuditFlags) == 0))
             {
                 throw new ArgumentException(
-                    SR.Arg_EnumAtLeastOneFlag,
-nameof(flags));
+                    "Must set at least one flag.",
+                    nameof(flags));
             }
 
             if (sid == null)
@@ -2255,7 +2255,7 @@ nameof(flags));
 
             set
             {
-                throw new NotSupportedException(SR.NotSupported_SetMethod);
+                throw new NotSupportedException("The 'set' method is not supported on this property.");
             }
         }
 

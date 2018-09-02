@@ -93,7 +93,7 @@ namespace DiscUtils.Security.AccessControl
             if (!IsDS)
             {
                 throw new InvalidOperationException(
-                    SR.InvalidOperation_OnlyValidForDS);
+                    "Adding ACEs with Object Flags and Object GUIDs is only valid for directory-object ACLs.");
             }
 
             CheckAccessType(accessType);
@@ -115,7 +115,7 @@ namespace DiscUtils.Security.AccessControl
             if (!IsDS)
             {
                 throw new InvalidOperationException(
-                    SR.InvalidOperation_OnlyValidForDS);
+                    "Adding ACEs with Object Flags and Object GUIDs is only valid for directory-object ACLs.");
             }
 
             CheckAccessType(accessType);
@@ -137,7 +137,7 @@ namespace DiscUtils.Security.AccessControl
             if (!IsDS)
             {
                 throw new InvalidOperationException(
-                    SR.InvalidOperation_OnlyValidForDS);
+                    "Adding ACEs with Object Flags and Object GUIDs is only valid for directory-object ACLs.");
             }
 
             CheckAccessType(accessType);
@@ -158,7 +158,7 @@ namespace DiscUtils.Security.AccessControl
             if (!IsDS)
             {
                 throw new InvalidOperationException(
-                    SR.InvalidOperation_OnlyValidForDS);
+                    "Adding ACEs with Object Flags and Object GUIDs is only valid for directory-object ACLs.");
             }
 
             CheckAccessType(accessType);

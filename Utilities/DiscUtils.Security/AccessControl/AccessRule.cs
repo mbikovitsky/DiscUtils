@@ -27,21 +27,21 @@ namespace DiscUtils.Security.AccessControl
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(type),
-                    SR.ArgumentOutOfRange_Enum);
+                    "Enum value was out of legal range.");
             }
 
             if (inheritanceFlags < InheritanceFlags.None || inheritanceFlags > (InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit))
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(inheritanceFlags),
-                    SR.Format(SR.Argument_InvalidEnumValue, inheritanceFlags, "InheritanceFlags"));
+                    $"The value '{inheritanceFlags}' is not valid for this usage of the type {InheritanceFlags}.");
             }
 
             if (propagationFlags < PropagationFlags.None || propagationFlags > (PropagationFlags.NoPropagateInherit | PropagationFlags.InheritOnly))
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(propagationFlags),
-                    SR.Format(SR.Argument_InvalidEnumValue, inheritanceFlags, "PropagationFlags"));
+                    $"The value '{propagationFlags}' is not valid for this usage of the type {PropagationFlags}.");
             }
 
             _type = type;
