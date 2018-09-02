@@ -103,4 +103,10 @@ namespace DiscUtils.Security.AccessControl
     {
         Impersonation = 0x01,
     }
+
+    public enum AccessControlType
+    {
+        Allow = 0,
+        Deny = 1,
+    }
 }
