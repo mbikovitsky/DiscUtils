@@ -109,4 +109,46 @@ namespace DiscUtils.Security.AccessControl
         Allow = 0,
         Deny = 1,
     }
+
+    [Flags]
+    public enum ControlFlags
+    {
+        None = 0x0000,
+        OwnerDefaulted = 0x0001, // set by RM only
+        GroupDefaulted = 0x0002, // set by RM only
+        DiscretionaryAclPresent = 0x0004, // set by RM or user, 'off' means DACL is null
+        DiscretionaryAclDefaulted = 0x0008, // set by RM only
+        SystemAclPresent = 0x0010, // same as DiscretionaryAclPresent
+        SystemAclDefaulted = 0x0020, // sams as DiscretionaryAclDefaulted
+        DiscretionaryAclUntrusted = 0x0040, // ignore this one
+        ServerSecurity = 0x0080, // ignore this one
+        DiscretionaryAclAutoInheritRequired = 0x0100, // ignore this one
+        SystemAclAutoInheritRequired = 0x0200, // ignore this one
+        DiscretionaryAclAutoInherited = 0x0400, // set by RM only
+        SystemAclAutoInherited = 0x0800, // set by RM only
+        DiscretionaryAclProtected = 0x1000, // when set, RM will stop inheriting
+        SystemAclProtected = 0x2000, // when set, RM will stop inheriting
+        RMControlValid = 0x4000, // the reserved 8 bits have some meaning
+        SelfRelative = 0x8000, // must always be on
+    }
+
+    [Flags]
+    public enum AccessControlSections
+    {
+        None = 0,
+        Audit = 0x1,
+        Access = 0x2,
+        Owner = 0x4,
+        Group = 0x8,
+        All = 0xF
+    }
+
+    [Flags]
+    public enum SecurityInfos
+    {
+        Owner = 0x00000001,
+        Group = 0x00000002,
+        DiscretionaryAcl = 0x00000004,
+        SystemAcl = 0x00000008,
+    }
 }
