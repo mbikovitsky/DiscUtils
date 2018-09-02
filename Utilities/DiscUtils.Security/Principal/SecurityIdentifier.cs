@@ -55,7 +55,7 @@ namespace DiscUtils.Security.Principal
 
         private string _sddlForm = null;
 
-        private static readonly IReadOnlyDictionary<string, WellKnownSidType> _wellKnownSddlConstants = new Dictionary<string, WellKnownSidType>
+        private static readonly IReadOnlyDictionary<string, WellKnownSidType?> _wellKnownSddlConstants = new Dictionary<string, WellKnownSidType?>
         {
             { "AC", (WellKnownSidType)84 },
             { "AN", WellKnownSidType.AnonymousSid },
@@ -66,11 +66,13 @@ namespace DiscUtils.Security.Principal
             { "BO", WellKnownSidType.BuiltinBackupOperatorsSid },
             { "BU", WellKnownSidType.BuiltinUsersSid },
             { "CD", (WellKnownSidType)78 },
-            { "CG",  WellKnownSidType.CreatorGroupSid },
+            { "CG", WellKnownSidType.CreatorGroupSid },
             { "CO", WellKnownSidType.CreatorOwnerSid },
             { "ED", WellKnownSidType.EnterpriseControllersSid },
             { "HI", (WellKnownSidType)68 },
             { "IU", WellKnownSidType.InteractiveSid },
+            { "LA", null },
+            { "LG", null },
             { "LS", WellKnownSidType.LocalServiceSid },
             { "LW", (WellKnownSidType)66 },
             { "ME", (WellKnownSidType)67 },
@@ -499,9 +501,9 @@ namespace DiscUtils.Security.Principal
                 throw new ArgumentNullException(nameof(sddlForm));
             }
 
-            if (_wellKnownSddlConstants.TryGetValue(sddlForm, out WellKnownSidType wellKnownSidType))
+            if (_wellKnownSddlConstants.TryGetValue(sddlForm, out WellKnownSidType? wellKnownSidType))
             {
-                CreateFromWellKnownSidType(wellKnownSidType, null);
+                CreateFromWellKnownSidType(wellKnownSidType ?? throw new NotImplementedException(), null);
                 return;
             }
 
