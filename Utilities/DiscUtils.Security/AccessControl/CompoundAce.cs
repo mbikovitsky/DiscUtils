@@ -1,4 +1,5 @@
-﻿using DiscUtils.Security.Principal;
+﻿using System;
+using DiscUtils.Security.Principal;
 
 namespace DiscUtils.Security.AccessControl
 {
@@ -169,6 +170,12 @@ namespace DiscUtils.Security.AccessControl
 
             SecurityIdentifier.GetBinaryForm(binaryForm, baseOffset + offsetLocal);
         }
+
+        public override string GetSddlForm()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

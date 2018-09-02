@@ -475,6 +475,46 @@ namespace DiscUtils.Security.AccessControl
                 GetOpaque().CopyTo(binaryForm, baseOffset + offsetLocal);
             }
         }
+
+        public override string GetSddlForm()
+        {
+            AceType type;
+            string objectGuid;
+            string inheritedObjectGuid;
+
+            if (AceType == AceType.AccessAllowedObject &&
+                !ObjectAceFlags.HasFlag(ObjectAceFlags.ObjectAceTypePresent) &&
+                !ObjectAceFlags.HasFlag(ObjectAceFlags.InheritedObjectAceTypePresent))
+            {
+                // If ace_type is ACCESS_ALLOWED_OBJECT_ACE_TYPE and neither object_guid nor inherit_object_guid
+                // has a GUID specified, then ConvertStringSecurityDescriptorToSecurityDescriptor
+                // converts ace_type to ACCESS_ALLOWED_ACE_TYPE.
+
+                type = AceType.AccessAllowed;
+
+                objectGuid = "";
+
+                inheritedObjectGuid = "";
+            }
+            else
+            {
+                type = AceType;
+
+                objectGuid =
+                    ObjectAceType.Equals(Guid.Empty)
+                        ? ""
+                        : ObjectAceType.ToString("D");
+
+                inheritedObjectGuid =
+                    InheritedObjectAceType.Equals(Guid.Empty)
+                        ? ""
+                        : InheritedObjectAceType.ToString("D");
+            }
+
+            return
+                $"{Utils.AceTypeToString(type)};{Utils.AceFlagsToString(AceFlags)};0x{AccessMask:x};{objectGuid};{inheritedObjectGuid};{SecurityIdentifier.Value}";
+        }
+
         #endregion
     }
 }

@@ -283,6 +283,13 @@ namespace DiscUtils.Security.AccessControl
                 GetOpaque().CopyTo(binaryForm, baseOffset + offsetLocal);
             }
         }
+
+        public override string GetSddlForm()
+        {
+            return
+                $"{Utils.AceTypeToString(AceType)};{Utils.AceFlagsToString(AceFlags)};0x{AccessMask:x};;;{SecurityIdentifier.Value}";
+        }
+
         #endregion
     }
 }

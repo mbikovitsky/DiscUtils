@@ -19,6 +19,14 @@ namespace SecurityTests
         [DllImport("advapi32.dll")]
         public static extern uint GetLengthSid(IntPtr sid);
 
+        [DllImport("advapi32.dll", EntryPoint = "ConvertStringSecurityDescriptorToSecurityDescriptor",
+            CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool ConvertStringSdToSd(string stringSd,
+                                                      uint stringSdRevision,
+                                                      out IntPtr resultSd,
+                                                      out uint resultSdSize);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr LocalFree(IntPtr handle);
     }

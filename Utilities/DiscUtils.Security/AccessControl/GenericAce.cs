@@ -586,6 +586,9 @@ namespace DiscUtils.Security.AccessControl
         {
             return !(left == right);
         }
+
+        public abstract string GetSddlForm();
+
         #endregion
     }
 }

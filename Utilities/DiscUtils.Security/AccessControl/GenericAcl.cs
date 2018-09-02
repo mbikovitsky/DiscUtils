@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 
 namespace DiscUtils.Security.AccessControl
 {
@@ -78,6 +79,11 @@ namespace DiscUtils.Security.AccessControl
         //
 
         public abstract void GetBinaryForm(byte[] binaryForm, int offset);
+
+        public string GetSddlForm()
+        {
+            return string.Join("", this.Cast<GenericAce>().Select(ace => $"({ace.GetSddlForm()})"));
+        }
 
         #endregion
 

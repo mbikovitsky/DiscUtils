@@ -149,6 +149,12 @@ namespace DiscUtils.Security.AccessControl
                 GetOpaque().CopyTo(binaryForm, offset);
             }
         }
+
+        public override string GetSddlForm()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

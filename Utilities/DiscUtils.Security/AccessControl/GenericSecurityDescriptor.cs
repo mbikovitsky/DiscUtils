@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text;
 using DiscUtils.Security.Principal;
 
 namespace DiscUtils.Security.AccessControl
@@ -166,7 +167,70 @@ namespace DiscUtils.Security.AccessControl
 
         public string GetSddlForm(AccessControlSections includeSections)
         {
-            throw new NotImplementedException();
+            var result = new StringBuilder();
+
+            if (includeSections.HasFlag(AccessControlSections.Owner))
+            {
+                result.AppendFormat("O:{0}", Owner.Value);
+            }
+
+            if (includeSections.HasFlag(AccessControlSections.Group))
+            {
+                result.AppendFormat("G:{0}", Group.Value);
+            }
+
+            if (includeSections.HasFlag(AccessControlSections.Access) && ControlFlags.HasFlag(ControlFlags.DiscretionaryAclPresent))
+            {
+                result.Append("D:");
+
+                if (ControlFlags.HasFlag(ControlFlags.DiscretionaryAclProtected))
+                {
+                    result.Append("P");
+                }
+
+                if (ControlFlags.HasFlag(ControlFlags.DiscretionaryAclAutoInheritRequired))
+                {
+                    result.Append("AR");
+                }
+
+                if (ControlFlags.HasFlag(ControlFlags.DiscretionaryAclAutoInherited))
+                {
+                    result.Append("AI");
+                }
+
+                if (null == GenericDacl || IsCraftedAefaDacl)
+                {
+                    result.Append("NO_ACCESS_CONTROL");
+                }
+                else
+                {
+                    result.Append(GenericDacl.GetSddlForm());
+                }
+            }
+
+            if (includeSections.HasFlag(AccessControlSections.Audit) && ControlFlags.HasFlag(ControlFlags.SystemAclPresent))
+            {
+                result.Append("S:");
+
+                if (ControlFlags.HasFlag(ControlFlags.SystemAclProtected))
+                {
+                    result.Append("P");
+                }
+
+                if (ControlFlags.HasFlag(ControlFlags.SystemAclAutoInheritRequired))
+                {
+                    result.Append("AR");
+                }
+
+                if (ControlFlags.HasFlag(ControlFlags.SystemAclAutoInherited))
+                {
+                    result.Append("AI");
+                }
+
+                result.Append(null == GenericSacl ? "NO_ACCESS_CONTROL" : GenericSacl.GetSddlForm());
+            }
+
+            return result.ToString();
         }
 
         //

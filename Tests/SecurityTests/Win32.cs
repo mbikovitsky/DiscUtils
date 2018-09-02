@@ -53,5 +53,32 @@ namespace SecurityTests
 
             return result;
         }
+
+        public static byte[] ConvertStringSdToSd(string stringSd)
+        {
+            IntPtr rawBuffer = IntPtr.Zero;
+            byte[] result;
+
+            try
+            {
+                if (!Win32Native.ConvertStringSdToSd(stringSd, 1, out rawBuffer, out uint rawBufferSize))
+                {
+                    Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+                }
+
+                result = new byte[rawBufferSize];
+
+                Marshal.Copy(rawBuffer, result, 0, (int)rawBufferSize);
+            }
+            finally
+            {
+                if (rawBuffer != IntPtr.Zero)
+                {
+                    Win32Native.LocalFree(rawBuffer);
+                }
+            }
+
+            return result;
+        }
     }
 }
