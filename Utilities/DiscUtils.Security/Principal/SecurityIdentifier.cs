@@ -55,41 +55,215 @@ namespace DiscUtils.Security.Principal
 
         private string _sddlForm = null;
 
-        private static readonly IReadOnlyDictionary<string, string> _wellKnownSddlConstants = new Dictionary<string, string>
+        private static readonly IReadOnlyDictionary<string, WellKnownSidType> _wellKnownSddlConstants = new Dictionary<string, WellKnownSidType>
         {
-            { "AC", "S-1-15-2-1" },
-            { "AN", "S-1-5-7" },
-            { "AO", "S-1-5-32-548" },
-            { "AU", "S-1-5-11" },
-            { "BA", "S-1-5-32-544" },
-            { "BG", "S-1-5-32-546" },
-            { "BO", "S-1-5-32-551" },
-            { "BU", "S-1-5-32-545" },
-            { "CD", "S-1-5-32-574" },
-            { "CG", "S-1-3-1" },
-            { "CO", "S-1-3-0" },
-            { "ED", "S-1-5-9" },
-            { "HI", "S-1-16-12288" },
-            { "IU", "S-1-5-4" },
-            { "LS", "S-1-5-19" },
-            { "LW", "S-1-16-4096" },
-            { "ME", "S-1-16-8192" },
-            { "MU", "S-1-5-32-558" },
-            { "NO", "S-1-5-32-556" },
-            { "NS", "S-1-5-20" },
-            { "NU", "S-1-5-2" },
-            { "PO", "S-1-5-32-550" },
-            { "PS", "S-1-5-10" },
-            { "PU", "S-1-5-32-547" },
-            { "RC", "S-1-5-12" },
-            { "RD", "S-1-5-32-555" },
-            { "RE", "S-1-5-32-552" },
-            { "RU", "S-1-5-32-554" },
-            { "SI", "S-1-16-16384" },
-            { "SO", "S-1-5-32-549" },
-            { "SU", "S-1-5-6" },
-            { "SY", "S-1-5-18" },
-            { "WD", "S-1-1-0" }
+            { "AC", (WellKnownSidType)84 },
+            { "AN", WellKnownSidType.AnonymousSid },
+            { "AO", WellKnownSidType.BuiltinAccountOperatorsSid },
+            { "AU", WellKnownSidType.AuthenticatedUserSid },
+            { "BA", WellKnownSidType.BuiltinAdministratorsSid },
+            { "BG", WellKnownSidType.BuiltinGuestsSid },
+            { "BO", WellKnownSidType.BuiltinBackupOperatorsSid },
+            { "BU", WellKnownSidType.BuiltinUsersSid },
+            { "CD", (WellKnownSidType)78 },
+            { "CG",  WellKnownSidType.CreatorGroupSid },
+            { "CO", WellKnownSidType.CreatorOwnerSid },
+            { "ED", WellKnownSidType.EnterpriseControllersSid },
+            { "HI", (WellKnownSidType)68 },
+            { "IU", WellKnownSidType.InteractiveSid },
+            { "LS", WellKnownSidType.LocalServiceSid },
+            { "LW", (WellKnownSidType)66 },
+            { "ME", (WellKnownSidType)67 },
+            { "MU", WellKnownSidType.BuiltinPerformanceMonitoringUsersSid },
+            { "NO", WellKnownSidType.BuiltinNetworkConfigurationOperatorsSid },
+            { "NS", WellKnownSidType.NetworkServiceSid },
+            { "NU", WellKnownSidType.NetworkSid },
+            { "PO", WellKnownSidType.BuiltinPrintOperatorsSid },
+            { "PS", WellKnownSidType.SelfSid },
+            { "PU", WellKnownSidType.BuiltinPowerUsersSid },
+            { "RC", WellKnownSidType.RestrictedCodeSid },
+            { "RD", WellKnownSidType.BuiltinRemoteDesktopUsersSid },
+            { "RE", WellKnownSidType.BuiltinReplicatorSid },
+            { "RU", WellKnownSidType.BuiltinPreWindows2000CompatibleAccessSid },
+            { "SI", (WellKnownSidType)69 },
+            { "SO", WellKnownSidType.BuiltinSystemOperatorsSid },
+            { "SU", WellKnownSidType.ServiceSid },
+            { "SY", WellKnownSidType.LocalSystemSid },
+            { "WD", WellKnownSidType.WorldSid }
+        };
+
+        private static readonly IReadOnlyDictionary<WellKnownSidType, Tuple<IdentifierAuthority, IReadOnlyList<int>>> _wellKnownSidPartsMap = new Dictionary<WellKnownSidType, Tuple<IdentifierAuthority, IReadOnlyList<int>>>
+        {
+            // WinLowLabelSid
+            {
+                (WellKnownSidType)66,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>((IdentifierAuthority)16, new[] { 0x1000 })
+            },
+
+            // WinMediumLabelSid
+            {
+                (WellKnownSidType)67,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>((IdentifierAuthority)16, new[] { 0x2000 })
+            },
+
+            // WinHighLabelSid
+            {
+                (WellKnownSidType)68,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>((IdentifierAuthority)16, new[] { 0x3000 })
+            },
+
+            // WinSystemLabelSid
+            {
+                (WellKnownSidType)69,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>((IdentifierAuthority)16, new[] { 0x4000 })
+            },
+
+            // WinBuiltinCertSvcDComAccessGroup
+            {
+                (WellKnownSidType)78,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 574 })
+            },
+
+            // WinBuiltinAnyPackageSid
+            {
+                (WellKnownSidType)84,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>((IdentifierAuthority)15, new[] { 2, 1 })
+            },
+
+            {
+                WellKnownSidType.AnonymousSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 7 })
+            },
+
+            {
+                WellKnownSidType.BuiltinAccountOperatorsSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 548 })
+            },
+
+            {
+                WellKnownSidType.AuthenticatedUserSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 11 })
+            },
+
+            {
+                WellKnownSidType.BuiltinAdministratorsSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 544 })
+            },
+
+            {
+                WellKnownSidType.BuiltinGuestsSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 546 })
+            },
+
+            {
+                WellKnownSidType.BuiltinBackupOperatorsSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 551 })
+            },
+
+            {
+                WellKnownSidType.BuiltinUsersSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 545 })
+            },
+
+            {
+                WellKnownSidType.CreatorGroupSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.CreatorAuthority, new[] { 1 })
+            },
+
+            {
+                WellKnownSidType.CreatorOwnerSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.CreatorAuthority, new[] { 0 })
+            },
+
+            {
+                WellKnownSidType.EnterpriseControllersSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 9 })
+            },
+
+            {
+                WellKnownSidType.InteractiveSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 4 })
+            },
+
+            {
+                WellKnownSidType.LocalServiceSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 19 })
+            },
+
+            {
+                WellKnownSidType.BuiltinPerformanceMonitoringUsersSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 558 })
+            },
+
+            {
+                WellKnownSidType.BuiltinNetworkConfigurationOperatorsSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 556 })
+            },
+
+            {
+                WellKnownSidType.NetworkServiceSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 20 })
+            },
+
+            {
+                WellKnownSidType.NetworkSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 2 })
+            },
+
+            {
+                WellKnownSidType.BuiltinPrintOperatorsSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 550 })
+            },
+
+            {
+                WellKnownSidType.SelfSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 10 })
+            },
+
+            {
+                WellKnownSidType.BuiltinPowerUsersSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 547 })
+            },
+
+            {
+                WellKnownSidType.RestrictedCodeSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 12 })
+            },
+
+            {
+                WellKnownSidType.BuiltinRemoteDesktopUsersSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 555 })
+            },
+
+            {
+                WellKnownSidType.BuiltinReplicatorSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 552 })
+            },
+
+            {
+                WellKnownSidType.BuiltinPreWindows2000CompatibleAccessSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 554 })
+            },
+
+            {
+                WellKnownSidType.BuiltinSystemOperatorsSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 32, 549 })
+            },
+
+            {
+                WellKnownSidType.ServiceSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 6 })
+            },
+
+            {
+                WellKnownSidType.LocalSystemSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.NTAuthority, new[] { 18 })
+            },
+
+            {
+                WellKnownSidType.WorldSid,
+                new Tuple<IdentifierAuthority, IReadOnlyList<int>>(IdentifierAuthority.WorldAuthority, new[] { 0 })
+            },
         };
 
         #endregion
@@ -296,6 +470,16 @@ namespace DiscUtils.Security.Principal
             return;
         }
 
+        private void CreateFromWellKnownSidType(WellKnownSidType sidType, SecurityIdentifier domainSid)
+        {
+            if (!_wellKnownSidPartsMap.TryGetValue(sidType, out Tuple<IdentifierAuthority, IReadOnlyList<int>> parts))
+            {
+                throw new NotImplementedException();
+            }
+
+            CreateFromParts(parts.Item1, parts.Item2.ToArray());
+        }
+
         //
         // Constructs a SecurityIdentifier object from its string representation
         // Returns 'null' if string passed in is not a valid SID
@@ -315,7 +499,11 @@ namespace DiscUtils.Security.Principal
                 throw new ArgumentNullException(nameof(sddlForm));
             }
 
-            sddlForm = _wellKnownSddlConstants.GetValueOrDefault(sddlForm, sddlForm);
+            if (_wellKnownSddlConstants.TryGetValue(sddlForm, out WellKnownSidType wellKnownSidType))
+            {
+                CreateFromWellKnownSidType(wellKnownSidType, null);
+                return;
+            }
 
             string[] components = sddlForm.Split('-');
 
@@ -355,8 +543,7 @@ namespace DiscUtils.Security.Principal
                     $"The number of sub-authorities must not exceed {MaxSubAuthorities}.");
             }
 
-            _identifierAuthority = authority;
-            _subAuthorities = subAuthorities;
+            CreateFromParts(authority, subAuthorities);
         }
 
         //
@@ -397,7 +584,7 @@ namespace DiscUtils.Security.Principal
                 throw new ArgumentException("Value was invalid.", nameof(sidType));
             }
 
-            throw new NotImplementedException();
+            CreateFromWellKnownSidType(sidType, domainSid);
         }
 
         internal SecurityIdentifier(SecurityIdentifier domainSid, uint rid)
