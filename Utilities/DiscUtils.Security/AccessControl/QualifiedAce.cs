@@ -14,96 +14,6 @@ namespace DiscUtils.Security.AccessControl
 
         #endregion
 
-        #region Private Methods
-
-        private AceQualifier QualifierFromType(AceType type, out bool isCallback)
-        {
-            //
-            // Better performance might be achieved by using a hard-coded table
-            //
-
-            switch (type)
-            {
-                case AceType.AccessAllowed:
-                    isCallback = false;
-                    return AceQualifier.AccessAllowed;
-
-                case AceType.AccessDenied:
-                    isCallback = false;
-                    return AceQualifier.AccessDenied;
-
-                case AceType.SystemAudit:
-                    isCallback = false;
-                    return AceQualifier.SystemAudit;
-
-                case AceType.SystemAlarm:
-                    isCallback = false;
-                    return AceQualifier.SystemAlarm;
-
-                case AceType.AccessAllowedCallback:
-                    isCallback = true;
-                    return AceQualifier.AccessAllowed;
-
-                case AceType.AccessDeniedCallback:
-                    isCallback = true;
-                    return AceQualifier.AccessDenied;
-
-                case AceType.SystemAuditCallback:
-                    isCallback = true;
-                    return AceQualifier.SystemAudit;
-
-                case AceType.SystemAlarmCallback:
-                    isCallback = true;
-                    return AceQualifier.SystemAlarm;
-
-                case AceType.AccessAllowedObject:
-                    isCallback = false;
-                    return AceQualifier.AccessAllowed;
-
-                case AceType.AccessDeniedObject:
-                    isCallback = false;
-                    return AceQualifier.AccessDenied;
-
-                case AceType.SystemAuditObject:
-                    isCallback = false;
-                    return AceQualifier.SystemAudit;
-
-                case AceType.SystemAlarmObject:
-                    isCallback = false;
-                    return AceQualifier.SystemAlarm;
-
-                case AceType.AccessAllowedCallbackObject:
-                    isCallback = true;
-                    return AceQualifier.AccessAllowed;
-
-                case AceType.AccessDeniedCallbackObject:
-                    isCallback = true;
-                    return AceQualifier.AccessDenied;
-
-                case AceType.SystemAuditCallbackObject:
-                    isCallback = true;
-                    return AceQualifier.SystemAudit;
-
-                case AceType.SystemAlarmCallbackObject:
-                    isCallback = true;
-                    return AceQualifier.SystemAlarm;
-
-                default:
-
-                    //
-                    // Indicates a bug in the implementation, not in user's code
-                    //
-
-                    Debug.Assert(false, "Invalid ACE type");
-                    // Replacing SystemException with InvalidOperationException. It's not a perfect fit,
-                    // but it's the best exception type available to indicate a failure because
-                    // of a bug in the ACE itself.
-                    throw new InvalidOperationException();
-            }
-        }
-
-        #endregion
-
         #region Constructors
 
         internal QualifiedAce(AceType type, AceFlags flags, int accessMask, SecurityIdentifier sid, byte[] opaque)
@@ -207,6 +117,93 @@ namespace DiscUtils.Security.AccessControl
 
             _opaque = opaque;
         }
+
+        internal static AceQualifier QualifierFromType(AceType type, out bool isCallback)
+        {
+            //
+            // Better performance might be achieved by using a hard-coded table
+            //
+
+            switch (type)
+            {
+                case AceType.AccessAllowed:
+                    isCallback = false;
+                    return AceQualifier.AccessAllowed;
+
+                case AceType.AccessDenied:
+                    isCallback = false;
+                    return AceQualifier.AccessDenied;
+
+                case AceType.SystemAudit:
+                    isCallback = false;
+                    return AceQualifier.SystemAudit;
+
+                case AceType.SystemAlarm:
+                    isCallback = false;
+                    return AceQualifier.SystemAlarm;
+
+                case AceType.AccessAllowedCallback:
+                    isCallback = true;
+                    return AceQualifier.AccessAllowed;
+
+                case AceType.AccessDeniedCallback:
+                    isCallback = true;
+                    return AceQualifier.AccessDenied;
+
+                case AceType.SystemAuditCallback:
+                    isCallback = true;
+                    return AceQualifier.SystemAudit;
+
+                case AceType.SystemAlarmCallback:
+                    isCallback = true;
+                    return AceQualifier.SystemAlarm;
+
+                case AceType.AccessAllowedObject:
+                    isCallback = false;
+                    return AceQualifier.AccessAllowed;
+
+                case AceType.AccessDeniedObject:
+                    isCallback = false;
+                    return AceQualifier.AccessDenied;
+
+                case AceType.SystemAuditObject:
+                    isCallback = false;
+                    return AceQualifier.SystemAudit;
+
+                case AceType.SystemAlarmObject:
+                    isCallback = false;
+                    return AceQualifier.SystemAlarm;
+
+                case AceType.AccessAllowedCallbackObject:
+                    isCallback = true;
+                    return AceQualifier.AccessAllowed;
+
+                case AceType.AccessDeniedCallbackObject:
+                    isCallback = true;
+                    return AceQualifier.AccessDenied;
+
+                case AceType.SystemAuditCallbackObject:
+                    isCallback = true;
+                    return AceQualifier.SystemAudit;
+
+                case AceType.SystemAlarmCallbackObject:
+                    isCallback = true;
+                    return AceQualifier.SystemAlarm;
+
+                default:
+
+                    //
+                    // Indicates a bug in the implementation, not in user's code
+                    //
+
+                    Debug.Assert(false, "Invalid ACE type");
+                    // Replacing SystemException with InvalidOperationException. It's not a perfect fit,
+                    // but it's the best exception type available to indicate a failure because
+                    // of a bug in the ACE itself.
+                    throw new InvalidOperationException();
+            }
+        }
+
         #endregion
     }
 }
