@@ -22,11 +22,16 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Security.AccessControl;
 using DiscUtils;
 using DiscUtils.Ntfs;
 using DiscUtils.Streams;
 using Xunit;
+
+#if !NETCORE
+using System.Security.AccessControl;
+#else
+using DiscUtils.Security.AccessControl;
+#endif
 
 namespace LibraryTests.Ntfs
 {

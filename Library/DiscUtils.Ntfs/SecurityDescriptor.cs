@@ -21,8 +21,13 @@
 //
 
 using System.IO;
-using System.Security.AccessControl;
 using DiscUtils.Streams;
+
+#if !NETCORE
+using System.Security.AccessControl;
+#else
+using DiscUtils.Security.AccessControl;
+#endif
 
 namespace DiscUtils.Ntfs
 {

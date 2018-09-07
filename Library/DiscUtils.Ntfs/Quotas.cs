@@ -24,8 +24,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Security.Principal;
 using DiscUtils.Streams;
+
+#if !NETCORE
+using System.Security.Principal;
+#else
+using DiscUtils.Security.Principal;
+#endif
 
 namespace DiscUtils.Ntfs
 {

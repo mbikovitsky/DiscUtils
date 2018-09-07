@@ -22,9 +22,15 @@
 
 using System;
 using System.IO;
+using DiscUtils.Streams;
+
+#if !NETCORE
 using System.Security.AccessControl;
 using System.Security.Principal;
-using DiscUtils.Streams;
+#else
+using DiscUtils.Security.AccessControl;
+using DiscUtils.Security.Principal;
+#endif
 
 namespace DiscUtils.Ntfs
 {

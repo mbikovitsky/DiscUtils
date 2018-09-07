@@ -25,6 +25,10 @@
     <ProjectReference Include="..\DiscUtils.Core\DiscUtils.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <ProjectReference Include="..\..\Utilities\DiscUtils.Security\DiscUtils.Security.csproj" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net20' ">
     <Reference Include="System" />
   </ItemGroup>

@@ -24,10 +24,15 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using DiscUtils.Internal;
 using DiscUtils.Streams;
+
+#if !NETCORE
+using System.Security.AccessControl;
+#else
+using DiscUtils.Security.AccessControl;
+#endif
 
 namespace DiscUtils.Wim
 {
