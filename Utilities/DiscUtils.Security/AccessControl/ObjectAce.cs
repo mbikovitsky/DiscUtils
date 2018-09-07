@@ -512,7 +512,7 @@ namespace DiscUtils.Security.AccessControl
             }
 
             return
-                $"{Utils.AceTypeToString(type)};{Utils.AceFlagsToString(AceFlags)};0x{AccessMask:x};{objectGuid};{inheritedObjectGuid};{SecurityIdentifier.Value}";
+                $"{Utils.AceTypes[AceType]};{Utils.AceFlagsToString(AceFlags)};0x{AccessMask:x};{objectGuid};{inheritedObjectGuid};{SecurityIdentifier.Value}";
         }
 
         #endregion

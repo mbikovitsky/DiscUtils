@@ -287,7 +287,7 @@ namespace DiscUtils.Security.AccessControl
         public override string GetSddlForm()
         {
             return
-                $"{Utils.AceTypeToString(AceType)};{Utils.AceFlagsToString(AceFlags)};0x{AccessMask:x};;;{SecurityIdentifier.Value}";
+                $"{Utils.AceTypes[AceType]};{Utils.AceFlagsToString(AceFlags)};0x{AccessMask:x};;;{SecurityIdentifier.Value}";
         }
 
         #endregion

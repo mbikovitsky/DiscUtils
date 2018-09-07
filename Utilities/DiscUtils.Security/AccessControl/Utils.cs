@@ -1,55 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace DiscUtils.Security.AccessControl
 {
     internal static class Utils
     {
-        /// <summary>
-        /// Converts an ACE type to the corresponding SDDL string.
-        /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static string AceTypeToString(AceType type)
+        public static readonly EnumStringDictionary AceTypes = new EnumStringDictionary(new Dictionary<Enum, string>
         {
-            switch (type)
-            {
-                case AceType.AccessAllowed:
-                    return "A";
-                case AceType.AccessDenied:
-                    return "D";
-                case AceType.SystemAudit:
-                    return "AU";
-                case AceType.SystemAlarm:
-                    return "AL";
-                case AceType.AccessAllowedObject:
-                    return "OA";
-                case AceType.AccessDeniedObject:
-                    return "OD";
-                case AceType.SystemAuditObject:
-                    return "OU";
-                case AceType.SystemAlarmObject:
-                    return "OL";
-                case AceType.AccessAllowedCallback:
-                    return "XA";
-                case AceType.AccessDeniedCallback:
-                    return "XD";
-                case AceType.AccessAllowedCallbackObject:
-                    return "ZA";
-                case AceType.SystemAuditCallback:
-                    return "XU";
-
-                case AceType.AccessAllowedCompound:
-                case AceType.AccessDeniedCallbackObject:
-                case AceType.SystemAlarmCallback:
-                case AceType.SystemAuditCallbackObject:
-                case AceType.SystemAlarmCallbackObject:
-                    throw new NotImplementedException();
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-        }
+            { AceType.AccessAllowed, "A" },
+            { AceType.AccessDenied, "D" },
+            { AceType.SystemAudit, "AU" },
+            { AceType.SystemAlarm, "AL" },
+            { AceType.AccessAllowedObject, "OA" },
+            { AceType.AccessDeniedObject, "OD" },
+            { AceType.SystemAuditObject, "OU" },
+            { AceType.SystemAlarmObject, "OL" },
+            { AceType.AccessAllowedCallback, "XA" },
+            { AceType.AccessDeniedCallback, "XD" },
+            { AceType.AccessAllowedCallbackObject, "ZA" },
+            { AceType.SystemAuditCallback, "XU" },
+        });
 
         /// <summary>
         /// Converts ACE flags to the corresponding SDDL string.
