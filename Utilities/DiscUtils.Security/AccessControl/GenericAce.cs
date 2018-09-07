@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
 using DiscUtils.Security.Principal;
 
 namespace DiscUtils.Security.AccessControl
@@ -380,15 +379,8 @@ namespace DiscUtils.Security.AccessControl
             // Parse flags
             //
 
-            Match flagsMatch = Regex.Match(fields[1], $"^({string.Join("|", Utils.AceFlags.Values)})*$");
-            if (!flagsMatch.Success)
-            {
-                throw new ArgumentException("Invalid ACE flags.", nameof(sddlForm));
-            }
-
-            AceFlags flags = flagsMatch.Groups[1].Captures.Cast<Capture>()
-                                       .Select(capture => capture.Value)
-                                       .Aggregate(AceFlags.None, (current, flagString) => current | (AceFlags)Utils.AceFlags[flagString]);
+            AceFlags flags = Utils.ParseFlagString(fields[1], Utils.AceFlags)
+                                  .Aggregate(AceFlags.None, (current, flag) => current | (AceFlags)flag);
 
             //
             // Parse rights

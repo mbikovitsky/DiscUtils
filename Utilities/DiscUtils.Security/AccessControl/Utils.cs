@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DiscUtils.Security.AccessControl
 {
@@ -49,6 +51,20 @@ namespace DiscUtils.Security.AccessControl
             }
 
             return result.ToString();
+        }
+
+        public static IEnumerable<Enum> ParseFlagString(string stringToParse, EnumStringDictionary dictionary)
+        {
+            Match flagsMatch = Regex.Match(stringToParse, $"^({string.Join("|", dictionary.Values.Select(Regex.Escape))})*$");
+            if (!flagsMatch.Success)
+            {
+                throw new ArgumentException("Invalid flags.", nameof(stringToParse));
+            }
+
+            return flagsMatch.Groups[1]
+                             .Captures
+                             .Cast<Capture>()
+                             .Select(capture => dictionary[capture.Value]);
         }
     }
 }
