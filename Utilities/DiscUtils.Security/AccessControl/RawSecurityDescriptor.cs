@@ -1,6 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using DiscUtils.Security.Principal;
 
 namespace DiscUtils.Security.AccessControl
@@ -15,6 +16,20 @@ namespace DiscUtils.Security.AccessControl
         private RawAcl _sacl;
         private RawAcl _dacl;
         private byte _rmControl; // the not-so-reserved SBZ1 field
+
+        private static readonly IReadOnlyDictionary<string, ControlFlags> _daclFlagsMap = new Dictionary<string, ControlFlags>
+        {
+            { "P", ControlFlags.DiscretionaryAclProtected },
+            { "AR", ControlFlags.DiscretionaryAclAutoInheritRequired },
+            { "AI", ControlFlags.DiscretionaryAclAutoInherited }
+        };
+
+        private static readonly IReadOnlyDictionary<string, ControlFlags> _saclFlagsMap = new Dictionary<string, ControlFlags>
+        {
+            { "P", ControlFlags.SystemAclProtected },
+            { "AR", ControlFlags.SystemAclAutoInheritRequired },
+            { "AI", ControlFlags.SystemAclAutoInherited }
+        };
 
         #endregion
 
@@ -44,6 +59,47 @@ namespace DiscUtils.Security.AccessControl
             ResourceManagerControl = 0;
         }
 
+        private static Tuple<ControlFlags, RawAcl> ParseAclSddl(string sddl)
+        {
+            Match match = Regex.Match(sddl, "^(?<prefix>D|S):(?<flags>P|AR|AI|NO_ACCESS_CONTROL)*(?<acl>.*)$");
+            if (!match.Success)
+            {
+                throw new ArgumentException("The SDDL form of a security descriptor object is invalid.", nameof(sddl));
+            }
+
+            bool isDacl = match.Groups["prefix"].Value == "D";
+
+            string[] flagStrings = match.Groups["flags"]
+                                        .Captures
+                                        .Cast<Capture>()
+                                        .Select(capture => capture.Value)
+                                        .ToArray();
+
+            string aclString = match.Groups["acl"].Value;
+            bool aclSpecified = !string.IsNullOrEmpty(aclString);
+
+            if (!aclSpecified && !flagStrings.Contains("NO_ACCESS_CONTROL"))
+            {
+                throw new ArgumentException("The SDDL form of a security descriptor object is invalid.", nameof(sddl));
+            }
+
+            IReadOnlyDictionary<string, ControlFlags> map = isDacl ? _daclFlagsMap : _saclFlagsMap;
+
+            ControlFlags flags = flagStrings
+                                 .Where(flagString => map.ContainsKey(flagString))
+                                 .Select(flagString => map[flagString])
+                                 .Aggregate(ControlFlags.None, (accumulated, currentFlag) => accumulated | currentFlag);
+
+            RawAcl acl = null;
+            if (aclSpecified)
+            {
+                acl = new RawAcl(aclString);
+                flags |= isDacl ? ControlFlags.DiscretionaryAclPresent : ControlFlags.SystemAclPresent;
+            }
+
+            return new Tuple<ControlFlags, RawAcl>(flags, acl);
+        }
+
         #endregion
 
         #region Constructors
@@ -64,7 +120,44 @@ namespace DiscUtils.Security.AccessControl
 
         public RawSecurityDescriptor(string sddlForm)
         {
-            throw new NotImplementedException();
+            if (sddlForm == null)
+            {
+                throw new ArgumentNullException(nameof(sddlForm));
+            }
+
+            Match match = Regex.Match(sddlForm, "^(?:O:(?<owner>.+?)|)(?:G:(?<group>.+?)|)(?<dacl>D:.+?|)(?<sacl>S:.+?|)$");
+            if (!match.Success)
+            {
+                throw new ArgumentException("The SDDL form of a security descriptor object is invalid.", nameof(sddlForm));
+            }
+
+            string ownerString = match.Groups["owner"].Value;
+            SecurityIdentifier owner = string.IsNullOrEmpty(ownerString) ? null : new SecurityIdentifier(ownerString);
+
+            string groupString = match.Groups["group"].Value;
+            SecurityIdentifier group = string.IsNullOrEmpty(groupString) ? null : new SecurityIdentifier(groupString);
+
+            ControlFlags daclFlags = ControlFlags.None;
+            RawAcl dacl = null;
+            string daclString = match.Groups["dacl"].Value;
+            if (daclString != "")
+            {
+                var tuple = ParseAclSddl(daclString);
+                daclFlags = tuple.Item1;
+                dacl = tuple.Item2;
+            }
+
+            ControlFlags saclFlags = ControlFlags.None;
+            RawAcl sacl = null;
+            string saclString = match.Groups["sacl"].Value;
+            if (saclString != "")
+            {
+                var tuple = ParseAclSddl(saclString);
+                saclFlags = tuple.Item1;
+                sacl = tuple.Item2;
+            }
+
+            CreateFromParts(daclFlags | saclFlags, owner, group, sacl, dacl);
         }
 
         //

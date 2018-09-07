@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DiscUtils.Security.AccessControl;
 using DiscUtils.Security.Principal;
 
 namespace SecurityTests
@@ -69,6 +70,33 @@ namespace SecurityTests
                 result = new byte[rawBufferSize];
 
                 Marshal.Copy(rawBuffer, result, 0, (int)rawBufferSize);
+            }
+            finally
+            {
+                if (rawBuffer != IntPtr.Zero)
+                {
+                    Win32Native.LocalFree(rawBuffer);
+                }
+            }
+
+            return result;
+        }
+
+        public static string ConvertSdToStringSd(byte[] securityDescriptor, SecurityInfos securityInfos)
+        {
+            IntPtr rawBuffer = IntPtr.Zero;
+            string result;
+
+            try
+            {
+                uint byteArraySize = 0;
+
+                if (!Win32Native.ConvertSdToStringSd(securityDescriptor, 1, (uint)securityInfos, out rawBuffer, ref byteArraySize))
+                {
+                    Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+                }
+
+                result = Marshal.PtrToStringUni(rawBuffer);
             }
             finally
             {

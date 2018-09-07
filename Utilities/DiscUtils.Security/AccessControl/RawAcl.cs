@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DiscUtils.Security.AccessControl
 {
@@ -212,6 +214,63 @@ namespace DiscUtils.Security.AccessControl
             : base()
         {
             SetBinaryForm(binaryForm, offset);
+        }
+
+        /// <summary>
+        /// Creates an ACL from its SDDL representation.
+        /// </summary>
+        /// <param name="sddlForm"></param>
+        public RawAcl(string sddlForm)
+        {
+            Match match = Regex.Match(sddlForm, @"^(?:\((?<ace>.+?)\))+$");
+            if (!match.Success)
+            {
+                throw new ArgumentException(
+                    "The SDDL form of an ACL object is invalid.",
+                    nameof(sddlForm));
+            }
+
+            _aces = new List<GenericAce>(match.Groups["ace"].Captures.Count);
+            int binaryLength = HeaderLength;
+
+            foreach (string aceString in match.Groups["ace"].Captures.Cast<Capture>().Select(capture => capture.Value))
+            {
+                GenericAce ace = GenericAce.CreateFromSddl(aceString);
+
+                int aceLength = ace.BinaryLength;
+
+                if (binaryLength + aceLength > MaxBinaryLength)
+                {
+                    //
+                    // The ACE was too long - it would overflow the ACL maximum length
+                    //
+
+                    throw new ArgumentException(
+                        "The SDDL form of an ACL object is invalid.",
+                        nameof(sddlForm));
+                }
+
+                _aces.Add(ace);
+
+                if (aceLength % 4 != 0)
+                {
+                    //
+                    // This indicates a bug in one of the ACE classes.
+                    // Binary length of an ace must ALWAYS be divisible by 4.
+                    //
+
+                    Debug.Assert(false, "aceLength % 4 != 0");
+                    // Replacing SystemException with InvalidOperationException. This code path 
+                    // indicates a bad ACE, but I don't know of a great exception to represent that. 
+                    // InvalidOperation seems to be the closest, though it's definitely not exactly 
+                    // right for this scenario.
+                    throw new InvalidOperationException();
+                }
+
+                binaryLength += aceLength;
+            }
+
+            _revision = AclRevision;
         }
 
         #endregion

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
 using DiscUtils.Security.Principal;
 
 namespace DiscUtils.Security.AccessControl
@@ -347,6 +350,105 @@ namespace DiscUtils.Security.AccessControl
             throw new ArgumentException(
                 "The binary form of an ACE object is invalid.",
                 nameof(binaryForm));
+        }
+
+        public static GenericAce CreateFromSddl(string sddlForm)
+        {
+            string[] fields = sddlForm.Split(';');
+            if (fields.Length != 6)
+            {
+                throw new ArgumentException(
+                    "Invalid number of components in SDDL string.",
+                    nameof(sddlForm));
+            }
+
+            //
+            // Parse type
+            //
+
+            AceType type;
+            try
+            {
+                type = (AceType)Utils.AceTypes[fields[0]];
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new ArgumentException("Unsupported ACE type.", nameof(sddlForm));
+            }
+
+            //
+            // Parse flags
+            //
+
+            Match flagsMatch = Regex.Match(fields[1], $"^({string.Join("|", Utils.AceFlags.Values)})*$");
+            if (!flagsMatch.Success)
+            {
+                throw new ArgumentException("Invalid ACE flags.", nameof(sddlForm));
+            }
+
+            AceFlags flags = flagsMatch.Groups[1].Captures.Cast<Capture>()
+                                       .Select(capture => capture.Value)
+                                       .Aggregate(AceFlags.None, (current, flagString) => current | (AceFlags)Utils.AceFlags[flagString]);
+
+            //
+            // Parse rights
+            //
+
+            int accessMask = 0;
+            if (!string.IsNullOrEmpty(fields[2]))
+            {
+                uint unsignedAccessMask = Convert.ToUInt32(fields[2], 16);
+                unchecked
+                {
+                    accessMask = (int)unsignedAccessMask;
+                }
+            }
+
+            //
+            // Parse object GUID
+            //
+
+            Guid objectGuid = Guid.Empty;
+            if (!string.IsNullOrEmpty(fields[3]))
+            {
+                objectGuid = Guid.ParseExact(fields[3], "D");
+            }
+
+            //
+            // Parse inherited object GUID
+            //
+
+            Guid inheritObjectGuid = Guid.Empty;
+            if (!string.IsNullOrEmpty(fields[4]))
+            {
+                inheritObjectGuid = Guid.ParseExact(fields[4], "D");
+            }
+
+            //
+            // Parse SID
+            //
+
+            SecurityIdentifier sid = new SecurityIdentifier(fields[5]);
+
+            //
+            // Now create the correct type of ACE
+            //
+
+            ObjectAceFlags objectAceFlags = ObjectAceFlags.None;
+            objectAceFlags |= objectGuid != Guid.Empty ? ObjectAceFlags.ObjectAceTypePresent : ObjectAceFlags.None;
+            objectAceFlags |= inheritObjectGuid != Guid.Empty ? ObjectAceFlags.InheritedObjectAceTypePresent : ObjectAceFlags.None;
+
+            AceQualifier qualifier = QualifiedAce.QualifierFromType(type, out bool isCallback);
+
+            if (!objectAceFlags.HasFlag(ObjectAceFlags.ObjectAceTypePresent) &&
+                !objectAceFlags.HasFlag(ObjectAceFlags.InheritedObjectAceTypePresent))
+            {
+                return new CommonAce(flags, qualifier, accessMask, sid, isCallback, null);
+            }
+            else
+            {
+                return new ObjectAce(flags, qualifier, accessMask, sid, objectAceFlags, objectGuid, inheritObjectGuid, isCallback, null);
+            }
         }
 
         #endregion
