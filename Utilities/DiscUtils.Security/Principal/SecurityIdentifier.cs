@@ -536,7 +536,14 @@ namespace DiscUtils.Security.Principal
                     "The size of the identifier authority must not exceed 6 bytes.");
             }
 
-            int[] subAuthorities = components.Skip(3).Select(int.Parse).ToArray();
+            int[] subAuthorities = components.Skip(3).Select(component =>
+            {
+                uint unsignedSubAuthority = uint.Parse(component);
+                unchecked
+                {
+                    return (int)unsignedSubAuthority;
+                }
+            }).ToArray();
             if (subAuthorities.Length > MaxSubAuthorities)
             {
                 throw new ArgumentOutOfRangeException(
