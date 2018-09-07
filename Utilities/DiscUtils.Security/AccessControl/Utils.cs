@@ -22,6 +22,17 @@ namespace DiscUtils.Security.AccessControl
             { AceType.SystemAuditCallback, "XU" },
         });
 
+        public static readonly EnumStringDictionary AceFlags = new EnumStringDictionary(new Dictionary<Enum, string>
+        {
+            { AccessControl.AceFlags.ContainerInherit, "CI" },
+            { AccessControl.AceFlags.ObjectInherit, "OI" },
+            { AccessControl.AceFlags.NoPropagateInherit, "NP" },
+            { AccessControl.AceFlags.InheritOnly, "IO" },
+            { AccessControl.AceFlags.Inherited, "ID" },
+            { AccessControl.AceFlags.SuccessfulAccess, "SA" },
+            { AccessControl.AceFlags.FailedAccess, "FA" }
+        });
+
         /// <summary>
         /// Converts ACE flags to the corresponding SDDL string.
         /// </summary>
@@ -29,39 +40,12 @@ namespace DiscUtils.Security.AccessControl
         {
             StringBuilder result = new StringBuilder();
 
-            if (flags.HasFlag(AceFlags.ContainerInherit))
+            foreach (KeyValuePair<Enum, string> pair in AceFlags)
             {
-                result.Append("CI");
-            }
-
-            if (flags.HasFlag(AceFlags.ObjectInherit))
-            {
-                result.Append("OI");
-            }
-
-            if (flags.HasFlag(AceFlags.NoPropagateInherit))
-            {
-                result.Append("NP");
-            }
-
-            if (flags.HasFlag(AceFlags.InheritOnly))
-            {
-                result.Append("IO");
-            }
-
-            if (flags.HasFlag(AceFlags.Inherited))
-            {
-                result.Append("ID");
-            }
-
-            if (flags.HasFlag(AceFlags.SuccessfulAccess))
-            {
-                result.Append("SA");
-            }
-
-            if (flags.HasFlag(AceFlags.FailedAccess))
-            {
-                result.Append("FA");
+                if (flags.HasFlag(pair.Key))
+                {
+                    result.Append(pair.Value);
+                }
             }
 
             return result.ToString();
