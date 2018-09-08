@@ -17,6 +17,15 @@ namespace DiscUtils.Security
 
             foreach (KeyValuePair<Enum, string> pair in pairs)
             {
+                if (enumToString.ContainsKey(pair.Key))
+                {
+                    throw new ArgumentException($"Enum value already exists: '{pair.Key}'.", nameof(pair.Key));
+                }
+                else if (stringToEnum.ContainsKey(pair.Value))
+                {
+                    throw new ArgumentException($"String already exists: '{pair.Value}'.", nameof(pair.Value));
+                }
+
                 enumToString[pair.Key] = pair.Value;
                 stringToEnum[pair.Value] = pair.Key;
             }
