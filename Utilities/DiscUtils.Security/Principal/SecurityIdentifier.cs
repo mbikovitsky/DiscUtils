@@ -539,10 +539,7 @@ namespace DiscUtils.Security.Principal
             int[] subAuthorities = components.Skip(3).Select(component =>
             {
                 uint unsignedSubAuthority = uint.Parse(component);
-                unchecked
-                {
-                    return (int)unsignedSubAuthority;
-                }
+                return unchecked((int)unsignedSubAuthority);
             }).ToArray();
             if (subAuthorities.Length > MaxSubAuthorities)
             {
