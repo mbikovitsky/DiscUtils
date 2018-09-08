@@ -65,7 +65,7 @@ namespace DiscUtils.Ntfs
             _context.AttributeDefinitions = new AttributeDefinitions();
 
             string localAdminString = ComputerAccount == null
-                ? "LA"
+                ? new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null).ToString()
                 : new SecurityIdentifier(WellKnownSidType.AccountAdministratorSid, ComputerAccount).ToString();
 
             using (new NtfsTransaction())
