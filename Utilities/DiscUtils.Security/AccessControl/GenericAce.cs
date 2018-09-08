@@ -380,20 +380,28 @@ namespace DiscUtils.Security.AccessControl
             //
 
             AceFlags flags = Utils.ParseFlagString(fields[1], Utils.AceFlags)
-                                  .Aggregate(AceFlags.None, (current, flag) => current | (AceFlags)flag);
+                                  .Aggregate(AceFlags.None, (aggregated, flag) => aggregated | (AceFlags)flag);
 
             //
             // Parse rights
             //
 
             int accessMask = 0;
-            if (!string.IsNullOrEmpty(fields[2]))
+            string accessMaskString = fields[2];
+            if (!string.IsNullOrEmpty(accessMaskString))
             {
-                uint unsignedAccessMask = Convert.ToUInt32(fields[2], 16);
-                unchecked
+                uint unsignedAccessMask;
+                try
                 {
-                    accessMask = (int)unsignedAccessMask;
+                    AccessRights rights = Utils.ParseFlagString(accessMaskString, Utils.AccessRights)
+                                               .Aggregate((AccessRights)0, (aggregated, flag) => aggregated | (AccessRights)flag);
+                    unsignedAccessMask = (uint)rights;
                 }
+                catch (ArgumentException)
+                {
+                    unsignedAccessMask = Convert.ToUInt32(accessMaskString, 16);
+                }
+                accessMask = unchecked((int)unsignedAccessMask);
             }
 
             //

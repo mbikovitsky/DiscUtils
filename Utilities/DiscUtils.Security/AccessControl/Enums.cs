@@ -151,4 +151,42 @@ namespace DiscUtils.Security.AccessControl
         DiscretionaryAcl = 0x00000004,
         SystemAcl = 0x00000008,
     }
+
+    [Flags]
+    public enum AccessRights : uint
+    {
+        GenericAll = 0x10000000,
+        GenericRead = 0x80000000,
+        GenericWrite = 0x40000000,
+        GenericExecute = 0x20000000,
+
+        ReadControl = 0x00020000,
+        Delete = 0x00010000,
+        WriteDac = 0x00040000,
+        WriteOwner = 0x00080000,
+
+        AdsRightDsReadProp = 0x00000010,
+        AdsRightDsWriteProp = 0x00000020,
+        AdsRightDsCreateChild = 0x00000001,
+        AdsRightDsDeleteChild = 0x00000002,
+        AdsRightActrlDsList = 0x00000004,
+        AdsRightDsSelf = 0x00000008,
+        AdsRightDsListObject = 0x00000080,
+        AdsRightDsDeleteTree = 0x00000040,
+        AdsRightDsControlAccess = 0x00000100,
+
+        FileAllAccess = 0x001F01FF,
+        FileGenericRead = 0x00120089,
+        FileGenericWrite = 0x00120116,
+        FileGenericExecute = 0x001200A0,
+
+        KeyAllAccess = 0x000F003F,
+        KeyRead = 0x00020019,
+        KeyWrite = 0x00020006,
+        KeyExecute = 0x00020019,
+
+        SystemMandatoryLabelNoReadUp = 0x00000002,
+        SystemMandatoryLabelNoWriteUp = 0x00000001,
+        SystemMandatoryLabelNoExecuteUp = 0x00000004,
+    }
 }

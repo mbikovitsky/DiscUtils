@@ -35,6 +35,43 @@ namespace DiscUtils.Security.AccessControl
             { AccessControl.AceFlags.FailedAccess, "FA" }
         });
 
+        public static readonly IReadOnlyDictionary<string, Enum> AccessRights = new Dictionary<string, Enum>
+        {
+            { "GA", AccessControl.AccessRights.GenericAll },
+            { "GR", AccessControl.AccessRights.GenericRead },
+            { "GW", AccessControl.AccessRights.GenericWrite },
+            { "GX", AccessControl.AccessRights.GenericExecute },
+
+            { "RC", AccessControl.AccessRights.ReadControl },
+            { "SD", AccessControl.AccessRights.Delete },
+            { "WD", AccessControl.AccessRights.WriteDac },
+            { "WO", AccessControl.AccessRights.WriteOwner },
+
+            { "RP", AccessControl.AccessRights.AdsRightDsReadProp },
+            { "WP", AccessControl.AccessRights.AdsRightDsWriteProp },
+            { "CC", AccessControl.AccessRights.AdsRightDsCreateChild },
+            { "DC", AccessControl.AccessRights.AdsRightDsDeleteChild },
+            { "LC", AccessControl.AccessRights.AdsRightActrlDsList },
+            { "SW", AccessControl.AccessRights.AdsRightDsSelf },
+            { "LO", AccessControl.AccessRights.AdsRightDsListObject },
+            { "DT", AccessControl.AccessRights.AdsRightDsDeleteTree },
+            { "CR", AccessControl.AccessRights.AdsRightDsControlAccess },
+
+            { "FA", AccessControl.AccessRights.FileAllAccess },
+            { "FR", AccessControl.AccessRights.FileGenericRead },
+            { "FW", AccessControl.AccessRights.FileGenericWrite },
+            { "FX", AccessControl.AccessRights.FileGenericExecute },
+
+            { "KA", AccessControl.AccessRights.KeyAllAccess },
+            { "KR", AccessControl.AccessRights.KeyRead },
+            { "KW", AccessControl.AccessRights.KeyWrite },
+            { "KX", AccessControl.AccessRights.KeyExecute },
+
+            { "NR", AccessControl.AccessRights.SystemMandatoryLabelNoReadUp },
+            { "NW", AccessControl.AccessRights.SystemMandatoryLabelNoWriteUp },
+            { "NX", AccessControl.AccessRights.SystemMandatoryLabelNoExecuteUp },
+        };
+
         /// <summary>
         /// Converts ACE flags to the corresponding SDDL string.
         /// </summary>
