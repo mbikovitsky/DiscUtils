@@ -22,9 +22,15 @@
 
 using System;
 using System.IO;
+using DiscUtils.Streams;
+
+#if !NETCORE
 using System.Security.AccessControl;
 using System.Security.Principal;
-using DiscUtils.Streams;
+#else
+using DiscUtils.Security.AccessControl;
+using DiscUtils.Security.Principal;
+#endif
 
 namespace DiscUtils.Ntfs
 {
@@ -59,7 +65,7 @@ namespace DiscUtils.Ntfs
             _context.AttributeDefinitions = new AttributeDefinitions();
 
             string localAdminString = ComputerAccount == null
-                ? "LA"
+                ? new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null).ToString()
                 : new SecurityIdentifier(WellKnownSidType.AccountAdministratorSid, ComputerAccount).ToString();
 
             using (new NtfsTransaction())

@@ -20,7 +20,11 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+#if !NETCORE
 using System.Security.AccessControl;
+#else
+using DiscUtils.Security.AccessControl;
+#endif
 
 namespace DiscUtils
 {

@@ -20,7 +20,11 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+#if !NETCORE
 using System.Security.Principal;
+#else
+using DiscUtils.Security.Principal;
+#endif
 
 namespace DiscUtils.Ntfs
 {
